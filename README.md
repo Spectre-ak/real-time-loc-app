@@ -1,2 +1,2 @@
 # real-time-loc-app
-a web app which uses azure maps for tracking everything in real-time using HTML geo location api and shows changes on the map
+A spring web app which uses azure maps and web sockets for tracking every user in real-time using HTML geo location api. 
