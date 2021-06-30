@@ -1,10 +1,10 @@
-
+var oneTimeGlobalVar;
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function(position) {
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
     var accuracy = position.coords.accuracy;
-
+    oneTimeGlobalVar=position;
     console.log(latitude,longitude,accuracy);
     document.getElementById("currentPOSDiv").innerHTML=(latitude+" , " +longitude+" , "+accuracy);
 
@@ -16,19 +16,9 @@ if (navigator.geolocation) {
 }
 
 function sendLocationToBackend(){
-  if (navigator.geolocation) {
-    console.log("func called");
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      try{
-        console.log("send func called "+JSON.stringify(pos));
-        stompClient.send("/app/coordinatesGlobal", {},JSON.stringify(pos));
-      }
-      catch(err){
-        console.log(err)
-      }
-     
-    });
-  }
+  console.log(oneTimeGlobalVar);
+  var pos={"acc":oneTimeGlobalVar.coords.accuracy,"lat":oneTimeGlobalVar.coords.latitude,"long":oneTimeGlobalVar.coords.longitude};
+  stompClient.send("/app/coordinatesGlobal", {},JSON.stringify(pos));
 }
 
 var id, target, options;

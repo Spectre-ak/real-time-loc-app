@@ -23,8 +23,12 @@ stompClient.connect({}, function (frame) {
         showGreeting(greeting.body);
     });
 
-    stompClient.subscribe('/coordinatesGlobalReceive',function(response){
-        console.log("received coorddinates "+response);
+    stompClient.subscribe('/topic/coordinatesGlobalReceive',function(response){
+        //console.log("received coorddinates "+response);
+    });
+
+    stompClient.subscribe('/topic/globalReceiver',function(response){
+        console.log(response);
     });
 });
 
@@ -60,3 +64,6 @@ $(function () {
 
 
 
+function sendMsgToPathVar(){
+    stompClient.send("/app/testingPathVariable", {}, JSON.stringify({"name":"randomPaths"}));
+}
