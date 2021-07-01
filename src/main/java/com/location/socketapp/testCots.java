@@ -42,14 +42,15 @@ public class testCots {
 	}
 
 	
+
 	
 	@GetMapping("/make")
-	public void name() {
+	public String name(@RequestParam(value = "q",defaultValue = "")String q) {
 
 		try {
 			HttpClient httpclient = HttpClients.createDefault();
 			
-			HttpPost httppost = new HttpPost("https://triton.azurewebsites.net/test.php");
+			HttpPost httppost = new HttpPost("https://www.google.com/search?q="+q);
 			//HttpPost httppost = new HttpPost("https://www.google.com");
 
 			// Request parameters and other properties.
@@ -62,20 +63,25 @@ public class testCots {
 			//Execute and get the response.
 			HttpResponse response = httpclient.execute(httppost);
 			HttpEntity entity = response.getEntity();
-
+			
+			String resString="";
 			if (entity != null) {
 			    try (InputStream instream = entity.getContent()) {
 			        Scanner scanner=new Scanner(instream);
 			        while(scanner.hasNextLine()) {
-			        	System.out.println(scanner.nextLine());
+			        	resString+=(scanner.nextLine());
 			        }
 			    }
 			}
 			
+			return resString;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			return e.getMessage();
 		}
+		
+		
 	}
 	
 	
