@@ -28,5 +28,5 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-          docker build ./ -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/real-time-loc-app:0.1
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/real-time-loc-app:0.1
+          docker build ./ -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/real-time-loc-app:0.2
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/real-time-loc-app:0.2
