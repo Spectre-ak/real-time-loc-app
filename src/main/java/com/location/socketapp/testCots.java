@@ -27,7 +27,6 @@ import com.nimbusds.oauth2.sdk.Request;
 public class testCots {
 
 	
-	@GetMapping("/reqGet")
 	public String RequestGet() {
 		String keyVaultName = "keyVaultsForSecureCreds";
 		String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
