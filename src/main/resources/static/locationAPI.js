@@ -9,7 +9,9 @@ if (navigator.geolocation) {
     document.getElementById("currentPOSDiv").innerHTML=(latitude+" , " +longitude+" , "+accuracy);
 
   },
-  function error(msg) {alert('Please enable your GPS position feature.');},
+  function error(msg) {
+//alert('Please enable your GPS position feature.');
+},
   {maximumAge:10000, timeout:5000, enableHighAccuracy: true});
 } else {
   //alert("Geolocation API is not supported in your browser.");
