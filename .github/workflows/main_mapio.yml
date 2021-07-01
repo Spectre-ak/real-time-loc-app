@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - mapio
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://dockerdemotesting.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_4f3371ea51814b189f4a87f47f102d8d }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_855d6727019a4947a3c1da992d226ce1 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: dockerdemotesting.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_4f3371ea51814b189f4a87f47f102d8d }}/real-time-loc-app:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'mapio'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_66e0885a6f5747049fe532b36c299a8c }}
+        images: 'dockerdemotesting.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_4f3371ea51814b189f4a87f47f102d8d }}/real-time-loc-app:${{ github.sha }}'
