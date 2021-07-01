@@ -26,22 +26,6 @@ import com.nimbusds.oauth2.sdk.Request;
 @RestController
 public class testCots {
 
-	@GetMapping("/req")
-	public String Request() {
-		String keyVaultName = "keyVaultsForSecureCreds";
-		String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
-
-		SecretClient secretClient = new SecretClientBuilder()
-		    .vaultUrl(keyVaultUri)
-		    .credential(new DefaultAzureCredentialBuilder().build())
-		    .buildClient();
-		
-		secretClient.setSecret(new KeyVaultSecret("secretName","secretValue"));
-		
-		System.out.println("As");
-		
-		return "created";
-	}
 	
 	@GetMapping("/reqGet")
 	public String RequestGet() {
@@ -53,29 +37,11 @@ public class testCots {
 		    .credential(new DefaultAzureCredentialBuilder().build())
 		    .buildClient();
 		
-		 KeyVaultSecret retrievedSecret = secretClient.getSecret("secretName");
+		 KeyVaultSecret retrievedSecret = secretClient.getSecret("databaseCredentials");
 		 
 		return retrievedSecret.getValue();
 	}
-	
-	@GetMapping("/saveCustom")
-	public String RequestGet(
-			@RequestParam(value = "name",defaultValue = "defValue")String name) {
-		
-		String keyVaultName = "keyVaultsForSecureCreds";
-		
-		String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
 
-		SecretClient secretClient = new SecretClientBuilder()
-		    .vaultUrl(keyVaultUri)
-		    .credential(new DefaultAzureCredentialBuilder().build())
-		    .buildClient();
-		
-		secretClient.setSecret(new KeyVaultSecret("secretName11",name));
-		 
-		return "added new value";
-	}
-	
 	
 	
 	@GetMapping("/make")

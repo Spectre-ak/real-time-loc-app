@@ -25,7 +25,7 @@ public class ReceiveSocketMsg {
 	
 	@MessageMapping("/{path}")
 	public void simple(@DestinationVariable String path,HashMap<String,String> hm) {
-	    System.out.println(path);
+	    System.out.println(path); 
 	    System.out.println(hm);
 	    hm.put("add","asdad");
 	    this.template.convertAndSend("/topic/globalReceiver",hm);
