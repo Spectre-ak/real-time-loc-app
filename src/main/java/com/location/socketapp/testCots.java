@@ -41,7 +41,6 @@ public class testCots {
 		return retrievedSecret.getValue();
 	}
 
-	
 
 	
 	@GetMapping("/make")
