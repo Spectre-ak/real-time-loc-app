@@ -10,7 +10,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,33 +49,27 @@ public class testCots {
 	public String name(@RequestParam(value = "q",defaultValue = "")String q) {
 
 		try {
-			HttpClient httpclient = HttpClients.createDefault();
-			
-			HttpPost httppost = new HttpPost("https://www.google.com/search?q="+q);
-			//HttpPost httppost = new HttpPost("https://www.google.com");
+			 CloseableHttpClient httpclient = HttpClients.createDefault();
 
-			// Request parameters and other properties.
-			List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-			params.add(new BasicNameValuePair("getCreds", "12345"));
+		      //Creating a HttpGet object
+		      HttpGet httpget = new HttpGet("https://www.google.com/search?q="+q);
 
-			
-			httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+		      //Printing the method used
+		      System.out.println("Request Type: "+httpget.getMethod());
 
-			//Execute and get the response.
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity entity = response.getEntity();
+		      //Executing the Get request
+		      HttpResponse httpresponse = httpclient.execute(httpget);
+
+		      Scanner sc = new Scanner(httpresponse.getEntity().getContent());
+
+		      //Printing the status line
+		      System.out.println(httpresponse.getStatusLine());
+		      String totalString="";
+		      while(sc.hasNextLine()) {
+		         totalString+=sc.nextLine();
+		      }
 			
-			String resString="";
-			if (entity != null) {
-			    try (InputStream instream = entity.getContent()) {
-			        Scanner scanner=new Scanner(instream);
-			        while(scanner.hasNextLine()) {
-			        	resString+=(scanner.nextLine());
-			        }
-			    }
-			}
-			
-			return resString;
+			return totalString;
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
