@@ -27,7 +27,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: dockerdemotesting.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_4f3371ea51814b189f4a87f47f102d8d }}/real-time-loc-app:${{ github.sha }}
+        tags: dockerdemotesting.azurecr.io/loc-tracker:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -45,4 +45,4 @@ jobs:
         app-name: 'mapio'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_66e0885a6f5747049fe532b36c299a8c }}
-        images: 'dockerdemotesting.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_4f3371ea51814b189f4a87f47f102d8d }}/real-time-loc-app:${{ github.sha }}'
+        images: 'dockerdemotesting.azurecr.io/loc-tracker:${{ github.sha }}'
