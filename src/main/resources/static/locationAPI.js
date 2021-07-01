@@ -12,7 +12,7 @@ if (navigator.geolocation) {
   function error(msg) {alert('Please enable your GPS position feature.');},
   {maximumAge:10000, timeout:5000, enableHighAccuracy: true});
 } else {
-  alert("Geolocation API is not supported in your browser.");
+  //alert("Geolocation API is not supported in your browser.");
 }
 
 function sendLocationToBackend(){
