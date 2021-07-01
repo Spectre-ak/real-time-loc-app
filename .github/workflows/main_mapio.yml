@@ -5,8 +5,7 @@ name: Build and deploy container app to Azure Web App - mapio
 
 on:
   push:
-    branches:
-      - main
+    branches: [ ]
   workflow_dispatch:
 
 jobs:
