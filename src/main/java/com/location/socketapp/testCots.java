@@ -14,11 +14,70 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.security.keyvault.secrets.SecretClient;
+import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.nimbusds.oauth2.sdk.Request;
 
 @RestController
 public class testCots {
 
+	@GetMapping("/req")
+	public String Request() {
+		String keyVaultName = "keyVaultsForSecureCreds";
+		String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
+
+		SecretClient secretClient = new SecretClientBuilder()
+		    .vaultUrl(keyVaultUri)
+		    .credential(new DefaultAzureCredentialBuilder().build())
+		    .buildClient();
+		
+		secretClient.setSecret(new KeyVaultSecret("secretName","secretValue"));
+		
+		System.out.println("As");
+		
+		return "created";
+	}
+	
+	@GetMapping("/reqGet")
+	public String RequestGet() {
+		String keyVaultName = "keyVaultsForSecureCreds";
+		String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
+
+		SecretClient secretClient = new SecretClientBuilder()
+		    .vaultUrl(keyVaultUri)
+		    .credential(new DefaultAzureCredentialBuilder().build())
+		    .buildClient();
+		
+		 KeyVaultSecret retrievedSecret = secretClient.getSecret("secretName");
+		 
+		return retrievedSecret.getValue();
+	}
+	
+	@GetMapping("/saveCustom")
+	public String RequestGet(
+			@RequestParam(value = "name",defaultValue = "defValue")String name) {
+		
+		String keyVaultName = "keyVaultsForSecureCreds";
+		
+		String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
+
+		SecretClient secretClient = new SecretClientBuilder()
+		    .vaultUrl(keyVaultUri)
+		    .credential(new DefaultAzureCredentialBuilder().build())
+		    .buildClient();
+		
+		secretClient.setSecret(new KeyVaultSecret("secretName11",name));
+		 
+		return "added new value";
+	}
+	
+	
+	
 	@GetMapping("/make")
 	public void name() {
 
@@ -53,4 +112,6 @@ public class testCots {
 			e.printStackTrace();
 		}
 	}
+	
+	
 }
