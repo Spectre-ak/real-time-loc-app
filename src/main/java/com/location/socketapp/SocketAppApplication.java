@@ -25,11 +25,14 @@ import java.net.URLEncoder;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
+import ch.qos.logback.classic.Logger;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -77,7 +80,7 @@ public class SocketAppApplication {
 		}
 	}
 	public static void main(String[] args) throws Exception{
-		//test1();if(true)return;
+		//name();if(true)return;
 		SpringApplication.run(SocketAppApplication.class, args);
 		
 //		try {
@@ -124,7 +127,7 @@ public class SocketAppApplication {
 	
 	public static void name() {
 		ConnectionString connectionString = new 
-				ConnectionString("");
+				ConnectionString(dbcon.dburl);
 		MongoClientSettings settings = MongoClientSettings.builder()
 		        .applyConnectionString(connectionString)
 		        .build();
@@ -143,8 +146,19 @@ public class SocketAppApplication {
 		
 		database.getCollection("collection0").insertOne(student);
 		
-		
+	
 		MongoCollection<Document> collection = database.getCollection("collection0");
+		
+		FindIterable<Document> fi = collection.find();
+        MongoCursor<Document> cursor = fi.iterator();
+        try {
+            while(cursor.hasNext()) {               
+                Document document=cursor.next();
+                System.out.println(document.get("_id"));
+            }
+        } finally {
+            cursor.close();
+        }
 		
 		
 		Document query = new Document("_id", new ObjectId("60db49c74c9a4324fb978112"));

@@ -1,13 +1,13 @@
 package com.location.socketapp;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.HashMap;import java.util.function.Consumer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import org.bson.Document;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +21,33 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 @RestController
 public class UserDetailController {
 
 	private String dburl=null;
+	private MongoClient mongoClient=null;
 	
-	private String AuthenticatedUser(String type) {
+	private synchronized String AuthenticatedUser(String type,HashMap<String,String> data) {
 		if(dburl==null) {
 			getDBUrl();
 			//error retrieving the db url
 			if(dburl==null)return null;
 		}
+		if(mongoClient==null) {
+			connectAndIntialize();
+			//error connecting to db
+			if(mongoClient==null)return null;
+		}
+		
+		MongoDatabase database = mongoClient.getDatabase("mongoDatabase0");
+		MongoCollection<Document> collection = database.getCollection("user");
 		
 		if(type.equals("1")) {
 			//log in
@@ -102,7 +117,7 @@ public class UserDetailController {
 
 	}
 	
-	private void getDBUrl() {
+	private synchronized void getDBUrl() {
 		
 		if(true) {
 			//locally testing
@@ -127,5 +142,13 @@ public class UserDetailController {
 	}
 	
 	
+	private synchronized void connectAndIntialize() {
+		ConnectionString connectionString = new ConnectionString(dburl);
+		MongoClientSettings settings = MongoClientSettings.builder()
+		        .applyConnectionString(connectionString)
+		        .build();
+		MongoClient mongoClient = MongoClients.create(settings);
+		this.mongoClient=mongoClient;
+	}
 	
 }
