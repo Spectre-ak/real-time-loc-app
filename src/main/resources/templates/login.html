@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Login or Sign Up to MapIO</title>
+
+    <style type="text/css">
+      .container {
+    width: 100%;
+    padding-right: 12%;
+    padding-left: 12%;
+    margin-right: auto;
+    margin-left: auto;
+}
+    </style>
+  </head>
+  <body>
+
+    <br/>
+
+    <h4>Login or signup</h4>
+    
+    <div class="container">
+
+
+      <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Sign Up</a>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+
+          <br/>
+          <form id="loginForm">
+            <p id="errorMsg" style="color: red"></p>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Email address</label>
+              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" required>
+
+            </div>
+            <div class="form-group">
+              <label for="exampleInputPassword1">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="loginButton">Log In</button>
+          </form>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+
+          <form id="signinupform">
+            <p id="errorMsgSignup" style="color: red"></p>
+              <div class="row align-items-center">
+                  <div class="col mt-4">
+                    <label>Full Name</label>
+                      <input type="text" class="form-control" name="name" id="fullName" placeholder="Full Name" required />
+
+                  </div>
+              </div>
+              <div class="row align-items-center mt-4">
+                  <div class="col">
+                    <label>Email</label>
+                      <input type="email" id="email" class="form-control" name="email" placeholder="Email" required />
+                  </div>
+              </div>
+              <div class="row align-items-center mt-4">
+                  <div class="col">
+
+                      <input type="password" class="form-control" id="pass" name="pass" placeholder="Password" required />
+                  </div>
+                  <div class="col">
+
+                      <input type="password" class="form-control" id="cnfPass" name="cnfPass" placeholder="Confirm Password" required />
+                  </div>
+              </div>
+              <p id="passInfo" style="color: red"></p>
+              
+               <button type="submit" class="btn btn-primary" id="signupButton">Sign Up</button>
+          </form>
+
+
+
+
+        </div>
+       </div>
+
+    </div>
+
+    <script>
+      document.getElementById("loginForm").addEventListener("submit",function(e){
+        e.preventDefault();
+        console.log(e.target)
+        document.getElementById("loginButton").innerHTML="<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>Checking...";
+
+        const data = { username: document.getElementById("exampleInputEmail1").value,
+          password:document.getElementById("exampleInputPassword1").value };
+
+        fetch('http://localhost:8080/loginDetail', {
+          method: 'POST', // or 'PUT'
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          document.getElementById("loginButton").innerHTML="Log In";
+          if(data.res==="ok"){
+            checkVal();
+          }
+          else{
+            document.getElementById('errorMsg').innerHTML=data.res;
+          }
+        })
+        .catch((error) => {
+          document.getElementById("loginButton").innerHTML="Log In";
+        });
+
+      });
+      document.getElementById("signinupform").addEventListener("submit",function(e){
+        e.preventDefault();
+        console.log(e.target)
+        
+        let pass=document.getElementById("pass").value+"";
+        let cnfPass=document.getElementById("cnfPass").value+"";
+        console.log(pass.length,pass.match(/[0-9]/g));
+        if(pass.length>=5 && pass.match(/[0-9]/g)){
+          if(pass===cnfPass){
+
+            document.getElementById("signupButton").innerHTML="<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>Checking...";
+            const data = { username: document.getElementById("email").value,
+              password:pass,
+              name:document.getElementById("fullName").value };
+
+            fetch('http://localhost:8080/signup', {
+              method: 'POST', // or 'PUT'
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              document.getElementById("signupButton").innerHTML="Sign Up";
+              if(data.res==="ok"){
+                checkVal();
+              }
+              else{
+                document.getElementById('errorMsgSignup').innerHTML=data.res;
+              }
+            })
+            .catch((error) => {
+              document.getElementById("signupButton").innerHTML="Sign Up";
+            });
+
+          }
+          else{
+            document.getElementById("passInfo").innerHTML="Passwords did not match";
+            return;
+          }
+        }
+        else{
+          document.getElementById("passInfo").innerHTML="Password must contain at least 5 characters and a digit";
+          return;
+        }
+
+
+      });
+
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>
