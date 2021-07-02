@@ -4,11 +4,14 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+ <meta name="google-signin-client_id"
+    content="712344756109-doffh2qvnfl05ej08s766f9rui7p5ifr.apps.googleusercontent.com">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+  
     <title>Login or Sign Up to MapIO</title>
+
 
     <style type="text/css">
       .container {
@@ -24,10 +27,11 @@
 
     <br/>
 
-    <h4>Login or signup</h4>
+    
     
     <div class="container">
 
+    <h4>Login or signup to use MapIO</h4>
 
       <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
         <li class="nav-item">
@@ -97,7 +101,11 @@
 
 
         </div>
+      
        </div>
+       <br/>
+       <p>Or Continue with </p>
+       <div class="g-signin2" data-onsuccess="onSignIn"></div>
 
     </div>
 
@@ -183,6 +191,21 @@
 
 
       });
+
+
+
+      function onSignIn(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+    }
+
+
+
+
 
     </script>
 

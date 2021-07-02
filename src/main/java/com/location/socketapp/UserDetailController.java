@@ -1,5 +1,6 @@
 package com.location.socketapp;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.servlet.http.Cookie;
@@ -37,9 +38,12 @@ public class UserDetailController {
 	@RequestMapping(value = "/signup", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	
-	public ResponseEntity<HashMap<String,String>> signup(HttpServletResponse response,
-			HttpServletRequest request, @RequestBody HashMap<String,String> data) {
+	public Object signup(HttpServletResponse response,
+			HttpServletRequest request, @RequestBody HashMap<String,String> data) throws IOException {
 
+		if(true) {
+			response.sendRedirect("/");
+		}
 		System.out.println(data);
 	    response.addCookie(new Cookie("heroku-nav-data", "adad"));
 	    HashMap<String,String> responseHashMap=new HashMap<>();
