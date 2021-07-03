@@ -23,9 +23,11 @@ import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 @RestController
@@ -34,7 +36,7 @@ public class UserDetailController {
 	private String dburl=null;
 	private MongoClient mongoClient=null;
 	
-	private synchronized String AuthenticatedUser(String type,HashMap<String,String> data) {
+	private synchronized HashMap<String,String> AuthenticatedUser(String type,HashMap<String,String> data) {
 		if(dburl==null) {
 			getDBUrl();
 			//error retrieving the db url
@@ -49,11 +51,51 @@ public class UserDetailController {
 		MongoDatabase database = mongoClient.getDatabase("mongoDatabase0");
 		MongoCollection<Document> collection = database.getCollection("user");
 		
+		
+		
+		FindIterable<Document> fi = collection.find();
+        MongoCursor<Document> cursor = fi.iterator();
+        
+		
+        HashMap<String,String> response=new 
+        		HashMap<>();
+        
+		
 		if(type.equals("1")) {
 			//log in
+			try {
+	            while(cursor.hasNext()) {               
+	                Document document=cursor.next();
+	                if(document.get("username").equals(data.get("username"))) {
+	                	if(document.get("password")
+	                			.equals(data.get("passsword"))) {
+	                		response.put("v","1");
+	                		response.put("socketId",document.get("socketId").toString());
+	                		return response;
+	                	}
+	                	break;
+	                }
+	            }
+	        } finally {
+	            cursor.close();
+	        }
+			response.put("v","-1");
+			return response;
 		}
 		else if(type.equals("2")) {
 			//sign up
+			try {
+	            while(cursor.hasNext()) {               
+	                Document document=cursor.next();
+	                if(document.get("username").equals(data.get("username"))) {
+	                	//
+	                	response.put("v","-2");
+	                	return response;
+	                }
+	            }
+	        } finally {
+	            cursor.close();
+	        }
 		}
 		else {
 			//google
