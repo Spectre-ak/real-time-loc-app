@@ -1,13 +1,16 @@
 package com.location.socketapp;
 
 import java.io.IOException;
-import java.util.HashMap;import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,8 +72,11 @@ public class UserDetailController {
 	                if(document.get("username").equals(data.get("username"))) {
 	                	if(document.get("password")
 	                			.equals(data.get("passsword"))) {
+	                		
 	                		response.put("v","1");
+	                		response.put("name",data.get("name"));
 	                		response.put("socketId",document.get("socketId").toString());
+	                		
 	                		return response;
 	                	}
 	                	break;
@@ -88,7 +94,7 @@ public class UserDetailController {
 	            while(cursor.hasNext()) {               
 	                Document document=cursor.next();
 	                if(document.get("username").equals(data.get("username"))) {
-	                	//
+	                	//returning if the username is present
 	                	response.put("v","-2");
 	                	return response;
 	                }
@@ -96,9 +102,47 @@ public class UserDetailController {
 	        } finally {
 	            cursor.close();
 	        }
+			
+			//username is not present so adding to db
+			Document user = createObject(data);
+			
+			
+			//adding user
+			collection.insertOne(user);
+			
+			response.put("v","2");
+			response.put("name",data.get("name"));
+			response.put("socketId", user.get("socketId").toString());
+			
+			return response;
 		}
 		else {
 			//google
+			try {
+	            while(cursor.hasNext()) {               
+	                Document document=cursor.next();
+	                if(document.get("username").equals(data.get("username"))) {
+	                	//returning if the username is present
+	                	response.put("v","3");
+	                	response.put("socketId",document.get("socketId").toString());
+	                	response.put("name",document.get("name").toString());
+	                	return response;
+	                }
+	            }
+	        } finally {
+	            cursor.close();
+	        }
+			
+			//g user not present
+			
+			Document user = createObject(data);
+			
+			//adding user
+			collection.insertOne(user);
+			
+			response.put("v","3");
+			response.put("name",data.get("name"));
+			response.put("socketId", user.get("socketId").toString());
 			
 		}
 		
@@ -193,4 +237,22 @@ public class UserDetailController {
 		this.mongoClient=mongoClient;
 	}
 	
+	
+	private Document createObject(HashMap<String,String> data) {
+		Document user = new Document("_id", new ObjectId());
+		user.append("username",data.get("username"));
+		user.append("name",data.get("name"));
+		user.append("password",data.get("password"));
+		user.append("imgUrl",data.get("img"));
+		
+		//socket ID generation
+		
+		String socketId=UUID.randomUUID().toString();
+		socketId=socketId.replaceAll("-","");
+		socketId=socketId+(new ObjectId()).toString();
+		
+		user.append("socketId", socketId);
+		
+		return user;
+	}
 }
