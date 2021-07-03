@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +33,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+
+import reactor.netty.http.Cookies;
 
 @RestController
 public class UserDetailController {
@@ -221,6 +224,19 @@ public class UserDetailController {
 	    		, HttpStatus.OK);
 		    
 
+	}
+	
+	@GetMapping("/checkUser")
+	public Object checkUser(HttpServletRequest request) {
+		Cookie[] cookies=request.getCookies();
+		HashMap<String,Boolean> hashMap=new HashMap<>();
+		for(Cookie cookie:cookies) {
+			if(cookie.getName().toString().equals("socketId")) {
+				hashMap.put("redirect",true);
+				return hashMap;
+			}
+		}
+		return hashMap;
 	}
 	
 	private synchronized void getDBUrl() {
