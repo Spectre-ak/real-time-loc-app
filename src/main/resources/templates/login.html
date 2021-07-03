@@ -110,6 +110,19 @@
     </div>
 
     <script>
+
+      function checkVal(data){
+        if(data.socketId!==undefined){
+          window.location.href="http://localhost:8080";
+        }
+      }
+
+      fetch('http://localhost:8080/checkUser').then(response=>response.json()).then(data=>{
+        if(data.redirect){
+          window.location.href="http://localhost:8080";
+        }
+      });
+
       document.getElementById("loginForm").addEventListener("submit",function(e){
         e.preventDefault();
         console.log(e.target)
@@ -129,12 +142,17 @@
         .then(data => {
           console.log(data);
           document.getElementById("loginButton").innerHTML="Log In";
-          if(data.res==="ok"){
-            checkVal();
+
+          if(data.error==="1"){
+            document.getElementById("errorMsg").innerHTML="Some Error Occurred on database. Please open a issue at <a href='https://github.com/Spectre-ak/real-time-loc-app/issues'>Github</a>.";
+          }
+          else if(data.v==="1"){
+            checkVal(data);
           }
           else{
-            document.getElementById('errorMsg').innerHTML=data.res;
+            document.getElementById('errorMsg').innerHTML="Invalid password or username";
           }
+
         })
         .catch((error) => {
           document.getElementById("loginButton").innerHTML="Log In";
@@ -167,12 +185,20 @@
             .then(data => {
               console.log(data);
               document.getElementById("signupButton").innerHTML="Sign Up";
-              if(data.res==="ok"){
-                checkVal();
+
+
+              if(data.error==="1"){
+                document.getElementById("errorMsgSignup").innerHTML="Some Error Occurred on database. Please open a issue at <a href='https://github.com/Spectre-ak/real-time-loc-app/issues'>Github</a>.";
+              }
+              else if(data.v==="2"){
+                checkVal(data);
               }
               else{
-                document.getElementById('errorMsgSignup').innerHTML=data.res;
+                document.getElementById('errorMsgSignup').innerHTML="Username is already in use.";
               }
+
+
+
             })
             .catch((error) => {
               document.getElementById("signupButton").innerHTML="Sign Up";
@@ -208,6 +234,14 @@
           .then(response=>response.json())
           .then(data=>{
             console.log(data);
+
+            if(data.error==="1"){
+              document.getElementById("errorMsgSignup").innerHTML="Some Error Occurred on database. Please open a issue at <a href='https://github.com/Spectre-ak/real-time-loc-app/issues'>Github</a>.";
+             document.getElementById("errorMsg").innerHTML="Some Error Occurred on database. Please open a issue at <a href='https://github.com/Spectre-ak/real-time-loc-app/issues'>Github</a>.";
+               
+            }
+            else
+              checkVal(data);
         });
       }
 
