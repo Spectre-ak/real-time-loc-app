@@ -39,7 +39,7 @@ public class UserDetailController {
 	private String dburl=null;
 	private MongoClient mongoClient=null;
 	
-	private synchronized HashMap<String,String> AuthenticatedUser(String type,HashMap<String,String> data) {
+	private synchronized HashMap<String,String> AuthenticateUser(String type,HashMap<String,String> data) {
 		if(dburl==null) {
 			getDBUrl();
 			//error retrieving the db url
@@ -94,7 +94,7 @@ public class UserDetailController {
 	            while(cursor.hasNext()) {               
 	                Document document=cursor.next();
 	                if(document.get("username").equals(data.get("username"))) {
-	                	//returning if the username is present
+	                	//returning if the username is already present
 	                	response.put("v","-2");
 	                	return response;
 	                }
@@ -160,11 +160,18 @@ public class UserDetailController {
 			HttpServletRequest request, @RequestBody HashMap<String,String> data) {
 
 		System.out.println(data);
-	    response.addCookie(new Cookie("heroku-nav-data", "adad"));
-	    HashMap<String,String> responseHashMap=new HashMap<>();
-	    responseHashMap.put("res","valid");
+	    
+	    HashMap<String,String> userVerdict=this.AuthenticateUser("1", data);
+
+	    System.out.println(userVerdict);
+	    
+	    if(userVerdict.get("v").equals("1")) {
+	    	response.addCookie(new Cookie("p","t"));
+	    	response.addCookie(new Cookie("socketId",userVerdict.get("socketId")));
+	    }
+	    
 	    //return new ResponseEntity<String>("msg",HttpStatus.OK); 
-	    return new ResponseEntity<HashMap<String,String>>(responseHashMap, HttpStatus.OK);
+	    return new ResponseEntity<HashMap<String,String>>(userVerdict, HttpStatus.OK);
 	    
 
 	}
@@ -175,15 +182,20 @@ public class UserDetailController {
 	public Object signup(HttpServletResponse response,
 			HttpServletRequest request, @RequestBody HashMap<String,String> data) throws IOException {
 
-		if(true) {
-			response.sendRedirect("/");
-		}
+		
 		System.out.println(data);
-	    response.addCookie(new Cookie("heroku-nav-data", "adad"));
-	    HashMap<String,String> responseHashMap=new HashMap<>();
-	    responseHashMap.put("res","valid");
-	    //return new ResponseEntity<String>("msg",HttpStatus.OK); 
-	    return new ResponseEntity<HashMap<String,String>>(responseHashMap, HttpStatus.OK);
+	    
+	    HashMap<String,String> userVerdict=this.AuthenticateUser("2", data);
+
+	    System.out.println(userVerdict);
+	    
+	    if(userVerdict.get("v").equals("2")) {
+	    	response.addCookie(new Cookie("p","t"));
+	    	response.addCookie(new Cookie("socketId",userVerdict.get("socketId")));
+	    }
+		
+	    return new ResponseEntity<HashMap<String,String>>(userVerdict
+	    		, HttpStatus.OK);
 	    
 
 	}
