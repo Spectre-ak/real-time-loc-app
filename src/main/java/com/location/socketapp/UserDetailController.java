@@ -305,11 +305,11 @@ public class UserDetailController {
 	
 	private synchronized void getDBUrl() {
 		
-		if(true) {
-			//locally testing
-			dburl=dbcon.dburl;return;
-		}
-		
+//		if(true) {
+//			//locally testing
+//			dburl=dbcon.dburl;return;
+//		}
+//		
 		try {
 			String keyVaultName = "keyVaultsForSecureCreds";
 			String keyVaultUri = "https://" + keyVaultName + ".vault.azure.net";
