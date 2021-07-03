@@ -155,7 +155,6 @@ public class UserDetailController {
 	
 	@RequestMapping(value = "/loginDetail", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	
 	public ResponseEntity<HashMap<String,String>> loginSimple(HttpServletResponse response,
 			HttpServletRequest request, @RequestBody HashMap<String,String> data) {
 
@@ -173,7 +172,6 @@ public class UserDetailController {
 	    //return new ResponseEntity<String>("msg",HttpStatus.OK); 
 	    return new ResponseEntity<HashMap<String,String>>(userVerdict, HttpStatus.OK);
 	    
-
 	}
 	
 	@RequestMapping(value = "/signup", method = RequestMethod.POST,
