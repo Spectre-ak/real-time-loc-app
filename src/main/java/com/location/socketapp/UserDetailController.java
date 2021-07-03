@@ -43,13 +43,15 @@ public class UserDetailController {
 		if(dburl==null) {
 			getDBUrl();
 			//error retrieving the db url
-			if(dburl==null)return null;
+			if(dburl==null)return this.DBError();
 		}
 		if(mongoClient==null) {
 			connectAndIntialize();
 			//error connecting to db
-			if(mongoClient==null)return null;
+			if(mongoClient==null)return this.DBError();
 		}
+		
+		
 		
 		MongoDatabase database = mongoClient.getDatabase("mongoDatabase0");
 		MongoCollection<Document> collection = database.getCollection("user");
@@ -70,7 +72,8 @@ public class UserDetailController {
 	            while(cursor.hasNext()) {               
 	                Document document=cursor.next();
 	                if(document.get("username").equals(data.get("username"))) {
-	                	if(document.get("password")
+	                	if(document.get("password")!=null &&
+	                			document.get("password")
 	                			.equals(data.get("passsword"))) {
 	                		
 	                		response.put("v","1");
@@ -143,11 +146,11 @@ public class UserDetailController {
 			response.put("v","3");
 			response.put("name",data.get("name"));
 			response.put("socketId", user.get("socketId").toString());
-			
+			return response;
 		}
 		
 		
-		return null;
+	
 	}
 	
 	
@@ -163,6 +166,7 @@ public class UserDetailController {
 	    HashMap<String,String> userVerdict=this.AuthenticateUser("1", data);
 
 	    System.out.println(userVerdict);
+	    
 	    
 	    if(userVerdict.get("v").equals("1")) {
 	    	response.addCookie(new Cookie("p","t"));
@@ -270,5 +274,11 @@ public class UserDetailController {
 		user.append("socketId", socketId);
 		
 		return user;
+	}
+	
+	private HashMap<String,String> DBError(){
+		HashMap<String, String> hashMap=new HashMap<>();
+		hashMap.put("error","1");
+		return hashMap;
 	}
 }
