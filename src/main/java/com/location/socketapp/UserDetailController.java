@@ -204,12 +204,18 @@ public class UserDetailController {
 			HttpServletRequest request, @RequestBody HashMap<String,String> data) throws IOException {
 
 		System.out.println(data);
-	    response.addCookie(new Cookie("heroku-nav-data", "adad"));
-	    HashMap<String,String> responseHashMap=new HashMap<>();
-	    responseHashMap.put("res","valid");
-	    //return new ResponseEntity<String>("msg",HttpStatus.OK); 
-	    return new ResponseEntity<HashMap<String,String>>(responseHashMap, HttpStatus.OK);
 	    
+	    HashMap<String,String> userVerdict=this.AuthenticateUser("3", data);
+
+	    System.out.println(userVerdict);
+	    
+	    response.addCookie(new Cookie("p","t"));
+	    response.addCookie(new Cookie("socketId",userVerdict.get("socketId")));
+	    
+		
+	    return new ResponseEntity<HashMap<String,String>>(userVerdict
+	    		, HttpStatus.OK);
+		    
 
 	}
 	
