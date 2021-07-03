@@ -1,7 +1,7 @@
 
 //fetching user details
 
-fetch('http://localhost:8080/fetchUserDetail').then(response=>response.json()).then(data=>{
+fetch('https://mapio.azurewebsites.net/fetchUserDetail').then(response=>response.json()).then(data=>{
   console.log(data);
   
   if(data.error==="1"){

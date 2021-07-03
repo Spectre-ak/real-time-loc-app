@@ -113,11 +113,13 @@
 
       function checkVal(data){
         if(data.socketId!==undefined){
-          window.location.href="http://localhost:8080";
+          window.location.href="https://mapio.azurewebsites.net";
         }
       }
 
-      fetch('http://localhost:8080/checkUser').then(response=>response.json()).then(data=>{
+      //fetch('http://localhost:8080/checkUser')
+      fetch('https://mapio.azurewebsites.net/checkUser', {
+      .then(response=>response.json()).then(data=>{
         if(data.redirect){
           window.location.href="http://localhost:8080";
         }
@@ -131,7 +133,8 @@
         const data = { username: document.getElementById("exampleInputEmail1").value,
           password:document.getElementById("exampleInputPassword1").value };
 
-        fetch('http://localhost:8080/loginDetail', {
+        //fetch('http://localhost:8080/loginDetail', {
+        fetch('https://mapio.azurewebsites.net/loginDetail', {
           method: 'POST', // or 'PUT'
           headers: {
             'Content-Type': 'application/json',
@@ -174,7 +177,8 @@
               password:pass,
               name:document.getElementById("fullName").value };
 
-            fetch('http://localhost:8080/signup', {
+            //fetch('http://localhost:8080/signup', {
+            fetch('https://mapio.azurewebsites.net/signup', {
               method: 'POST', // or 'PUT'
               headers: {
                 'Content-Type': 'application/json',
@@ -227,7 +231,9 @@
         console.log('Image URL: ' + profile.getImageUrl());
         console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
         var data={name:profile.getName(),img:profile.getImageUrl(),username:profile.getEmail()};
-        fetch('http://localhost:8080/signingoogle',{
+
+        //fetch('http://localhost:8080/signingoogle',{
+        fetch('https://mapio.azurewebsites.net/signingoogle', {
           method:'POST',
           headers:{'Content-Type':'application/json'},
           body:JSON.stringify(data)})
