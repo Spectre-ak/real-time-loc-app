@@ -1,6 +1,7 @@
 package com.location.socketapp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -136,6 +137,7 @@ public class SocketAppApplication {
 
 		Random rand = new Random();
 		Document student = new Document("_id", new ObjectId());
+		
 		student.append("student_id", 10000d)
         .append("class_id", 1d)
         .append("scores", asList(new Document("type", "exam").append("score", rand.nextDouble() * 100),
