@@ -1,3 +1,25 @@
+
+//fetching user details
+
+fetch('http://localhost:8080/fetchUserDetail').then(response=>response.json()).then(data=>{
+  console.log(data);
+  
+  if(data.error==="1"){
+    document.getElementById("userDetailDiv").innerHTML="Some Error Occurred on database. Please open a issue at <a href='https://github.com/Spectre-ak/real-time-loc-app/issues'>Github</a>."
+  }
+  else if(data.user==="-1"){
+    //user not logged in
+    document.getElementById("userDetailDiv").innerHTML="<a class='btn btn-primary' href='/login' role='button'>Login/Sign up</a>"
+  }
+  else{
+    var nameP="<p>"+data.name+"</p>";
+    var idP="<p>"+data.socketId+"</p>";
+    document.getElementById("userDetailDiv").innerHTML=nameP+idP;
+  }
+
+});
+
+
 var oneTimeGlobalVar;
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function(position) {

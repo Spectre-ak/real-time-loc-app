@@ -157,7 +157,41 @@ public class UserDetailController {
 	}
 	
 	
-	
+	private synchronized HashMap<String,String> getUserDetail(HashMap<String,String> data) {
+		if(dburl==null) {
+			getDBUrl();
+			//error retrieving the db url
+			if(dburl==null)return this.DBError();
+		}
+		if(mongoClient==null) {
+			connectAndIntialize();
+			//error connecting to db
+			if(mongoClient==null)return this.DBError();
+		}
+		
+		MongoDatabase database = mongoClient.getDatabase("mongoDatabase0");
+		MongoCollection<Document> collection = database.getCollection("user");
+		
+		FindIterable<Document> fi = collection.find();
+        MongoCursor<Document> cursor = fi.iterator();
+        
+        
+        try {
+			while(cursor.hasNext()) {
+				Document document=cursor.next();
+				if(document.get("socketId")!=null &&
+						document.get("socketId").toString().equals(data.get("socketId"))) {
+					data.put("name",document.get("name").toString());
+					break;
+				}
+			}
+		} 
+        finally {
+        	cursor.close();
+		}
+        
+        return data;
+	}
 	
 	@RequestMapping(value = "/loginDetail", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE)
@@ -238,6 +272,36 @@ public class UserDetailController {
 		}
 		return hashMap;
 	}
+	
+	
+	@GetMapping("/fetchUserDetail")
+	public Object fetchUserDetail(HttpServletRequest request) {
+		Cookie[] cookies=request.getCookies();
+		HashMap<String,String> hashMap=new HashMap<>();
+		try {
+			for(Cookie cookie:cookies) {
+				if(cookie.getName().toString().equals("socketId")) {
+					hashMap.put("socketId",cookie.getValue());
+					break;
+				}
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		System.out.println(hashMap);
+		
+		if(hashMap.get("socketId")==null) {
+			hashMap.put("user","-1");
+			return hashMap;
+		}
+		
+		return getUserDetail(hashMap);
+	}
+	
+	
 	
 	private synchronized void getDBUrl() {
 		
