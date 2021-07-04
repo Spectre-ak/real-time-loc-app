@@ -3,9 +3,17 @@ var map, point,point2;
 var defLat=28.5934,defLong=77.2223;
 
 var cookie=document.cookie;
-cookie=cookie.split(';')
-var socketId=cookie[2].split("=")[1];
-console.log(socketId);
+cookie=cookie.split(';');
+var socketId;
+
+for(var i=0;i<cookie.length;i++){
+	if(cookie[i].includes("socketId")){
+	socketId=cookie[i].split("=")[1];
+	console.log(socketId);
+
+		break;
+	}
+}
 
 function GetMap() {
     //Initialize a map instance.
