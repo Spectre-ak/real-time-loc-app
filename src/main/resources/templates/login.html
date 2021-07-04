@@ -118,10 +118,11 @@
       }
 
       //fetch('http://localhost:8080/checkUser')
-      fetch('https://mapio.azurewebsites.net/checkUser', {
+      fetch('https://mapio.azurewebsites.net/checkUser')
       .then(response=>response.json()).then(data=>{
         if(data.redirect){
-          window.location.href="http://localhost:8080";
+          //window.location.href="http://localhost:8080";
+          window.location.href="https://mapio.azurewebsites.net";
         }
       });
 
