@@ -1,20 +1,26 @@
 
 //fetching user details
 
-fetch('https://mapio.azurewebsites.net/fetchUserDetail').then(response=>response.json()).then(data=>{
-  console.log(data);
+//fetch('https://mapio.azurewebsites.net/fetchUserDetail')
+
+var data=undefined;
+
+fetch('https://mapio.azurewebsites.net/fetchUserDetail')
+.then(response=>response.json()).then(res=>{
+  console.log(res);
   
-  if(data.error==="1"){
+  if(res.error==="1"){
     document.getElementById("userDetailDiv").innerHTML="Some Error Occurred on database. Please open a issue at <a href='https://github.com/Spectre-ak/real-time-loc-app/issues'>Github</a>."
   }
-  else if(data.user==="-1"){
+  else if(res.user==="-1"){
     //user not logged in
     document.getElementById("userDetailDiv").innerHTML="<a class='btn btn-primary' href='/login' role='button'>Login/Sign up</a>"
   }
   else{
-    var nameP="<p>"+data.name+"</p>";
-    var idP="<p>"+data.socketId+"</p>";
+    var nameP="<p>"+res.name+"</p>";
+    var idP="<p id='socketIdpara'>"+res.socketId+"</p>";
     document.getElementById("userDetailDiv").innerHTML=nameP+idP;
+    data=res;
   }
 
 });
@@ -41,8 +47,9 @@ if (navigator.geolocation) {
 
 function sendLocationToBackend(){
   console.log(oneTimeGlobalVar);
-  var pos={"acc":oneTimeGlobalVar.coords.accuracy,"lat":oneTimeGlobalVar.coords.latitude,"long":oneTimeGlobalVar.coords.longitude};
-  stompClient.send("/app/coordinatesGlobal", {},JSON.stringify(pos));
+  var posCold={"acc":oneTimeGlobalVar.coords.accuracy,"lat":oneTimeGlobalVar.coords.latitude,"long":oneTimeGlobalVar.coords.longitude,"socketId":data.socketId,"name":data.name};
+  if(data!==undefined)
+    stompClient.send("/app/"+data.socketId, {},JSON.stringify(posCold));
 }
 
 var id, target, options;
@@ -52,9 +59,14 @@ function success(position) {
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
       var accuracy = position.coords.accuracy;
-     console.log("changed pos "+JSON.stringify(position));
-     document.getElementById("changedPOSDiv").innerHTML="changed pos "+(latitude+" , " +longitude+" , "+accuracy);
-     stompClient.send("/app/coordinatesGlobal", {},JSON.stringify(position));
+      console.log("changed pos "+JSON.stringify(position));
+      document.getElementById("changedPOSDiv").innerHTML="changed pos "+(latitude+" , " +longitude+" , "+accuracy);
+
+      if(data!==undefined){
+        var pos={"acc":accuracy,"lat":latitude,"long":longitude,"socketId":data.socketId,"name":data.name};
+        stompClient.send("/app/"+data.socketId, {},JSON.stringify(pos));
+      }
+      
   }
   catch(err){
     console.log(err);
