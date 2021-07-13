@@ -36,6 +36,9 @@ import com.mongodb.client.MongoDatabase;
 
 import reactor.netty.http.Cookies;
 
+/*
+Controller for handling user authentication and related stuffs.
+*/
 @RestController
 public class UserDetailController {
 
